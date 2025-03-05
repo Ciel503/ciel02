@@ -1,14 +1,37 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import '@/style/login.css';
 
 export default function CriarUsuario() {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [senha, setSenha] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    const verificarAutenticacao = async () => {
+      try {
+        const response = await fetch('/api/auth/adm/check', {
+          credentials: 'include'
+        });
+        const data = await response.json();
+
+        if (!data.success) {
+          console.log('Não autenticado, redirecionando para login...');
+          router.replace('/login-adm');
+        }
+      } catch (error) {
+        console.error('Erro ao verificar autenticação:', error);
+        router.replace('/login-adm');
+      }
+    };
+
+    verificarAutenticacao();
+  }, [router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,7 +45,7 @@ export default function CriarUsuario() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, senha }),
       });
 
       const data = await response.json();
@@ -31,10 +54,11 @@ export default function CriarUsuario() {
         throw new Error(data.error || 'Erro ao criar usuário');
       }
 
-      setMessage(data.message);
+      setMessage('Usuário criado com sucesso!');
       setEmail('');
-      setPassword('');
+      setSenha('');
     } catch (error) {
+      console.error('Erro ao criar usuário:', error);
       setError(error instanceof Error ? error.message : 'Erro ao criar usuário');
     } finally {
       setLoading(false);
@@ -44,10 +68,10 @@ export default function CriarUsuario() {
   return (
     <div className="login-container">
       <div className="login-box">
-        <h1 className="login-title">Criar Usuário</h1>
+        <h1 className="login-title">Criar Novo Usuário</h1>
         
-        {error && <div className="error-message">{error}</div>}
         {message && <div className="success-message">{message}</div>}
+        {error && <div className="error-message">{error}</div>}
         
         <form onSubmit={handleSubmit}>
           <div className="form-group">
@@ -59,20 +83,20 @@ export default function CriarUsuario() {
               onChange={(e) => setEmail(e.target.value)}
               required
               className="form-input"
-              placeholder="Digite o email"
+              placeholder="Digite o email do usuário"
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="password">Senha</label>
+            <label htmlFor="senha">Senha</label>
             <input
               type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              id="senha"
+              value={senha}
+              onChange={(e) => setSenha(e.target.value)}
               required
               className="form-input"
-              placeholder="Digite a senha"
+              placeholder="Digite a senha do usuário"
             />
           </div>
 

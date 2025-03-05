@@ -8,17 +8,25 @@ export async function POST(request: Request) {
     await dbConnect();
     console.log('Conectado ao banco de dados');
 
-    const { email, password } = await request.json();
+    const { email, senha } = await request.json();
+    console.log('Dados recebidos:', { email, senha: senha ? 'presente' : 'ausente' });
+
+    if (!email || !senha) {
+      return NextResponse.json(
+        { error: 'Email e senha são obrigatórios' },
+        { status: 400 }
+      );
+    }
 
     // Criar hash da senha
     const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const hashedPassword = await bcrypt.hash(senha, salt);
 
     // Verificar se o usuário já existe
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return NextResponse.json({
-        message: 'Usuário já existe',
+        error: 'Usuário já existe',
         user: {
           email: existingUser.email,
           createdAt: existingUser.createdAt

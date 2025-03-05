@@ -17,27 +17,33 @@ export default function LoginAdm() {
     setLoading(true);
 
     try {
+      console.log('Iniciando tentativa de login...');
       const response = await fetch('/api/auth/adm', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
         },
         body: JSON.stringify({ email, senha }),
         credentials: 'include'
       });
 
       const data = await response.json();
+      console.log('Resposta do login:', data);
 
       if (!response.ok) {
         throw new Error(data.error || 'Erro ao fazer login');
       }
 
       if (data.success) {
-        router.push('/criar-usuario');
+        console.log('Login bem-sucedido, redirecionando...');
+        // Redirecionar imediatamente após o login bem-sucedido
+        window.location.href = '/criar-usuario';
       } else {
         throw new Error('Erro ao fazer login');
       }
     } catch (error) {
+      console.error('Erro durante o login:', error);
       setError(error instanceof Error ? error.message : 'Erro ao fazer login');
     } finally {
       setLoading(false);
