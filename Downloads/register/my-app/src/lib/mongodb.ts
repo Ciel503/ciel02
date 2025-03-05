@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const MONGODB_URI = process.env.MONGODB_URI as string;
+const MONGODB_URI = process.env.MONGODB_URI;
 
 if (!MONGODB_URI) {
   throw new Error('Por favor, defina a variável de ambiente MONGODB_URI');
@@ -15,29 +15,31 @@ declare global {
   var mongoose: Cached | undefined;
 }
 
-let cached = global.mongoose;
+let cached: Cached = global.mongoose || { conn: null, promise: null };
 
-if (!cached) {
-  cached = global.mongoose = { conn: null, promise: null };
+if (!global.mongoose) {
+  global.mongoose = cached;
 }
 
 async function dbConnect() {
-  if (cached?.conn) {
+  if (cached.conn) {
     return cached.conn;
   }
 
-  if (!cached?.promise) {
-    cached = global.mongoose = { conn: null, promise: null };
-    
-    cached.promise = mongoose.connect(MONGODB_URI).then((mongoose) => {
-      cached!.conn = mongoose;
+  if (!cached.promise) {
+    const opts = {
+      bufferCommands: false,
+    };
+
+    cached.promise = mongoose.connect(MONGODB_URI!, opts).then((mongoose) => {
+      console.log('Conectado ao MongoDB com sucesso!');
       return mongoose;
     });
   }
 
   try {
-    const mongoose = await cached.promise;
-    return mongoose;
+    cached.conn = await cached.promise;
+    return cached.conn;
   } catch (e) {
     cached.promise = null;
     throw e;

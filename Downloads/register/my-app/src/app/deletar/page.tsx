@@ -75,7 +75,9 @@ export default function DeletarImagem() {
                 disabled={loadingStates[imagem._id]}
                 className="delete-button"
               >
-                <MdDelete className="delete-icon" />
+                <div className="delete-icon">
+                  <MdDelete />
+                </div>
                 {loadingStates[imagem._id] ? 'Deletando...' : 'Deletar'}
               </button>
             </div>
