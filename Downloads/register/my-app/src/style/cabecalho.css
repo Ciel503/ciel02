@@ -122,9 +122,23 @@
   transform: translateY(-2px);
 }
 
+.admin-link {
+  background: linear-gradient(45deg, #60a5fa, #34d399);
+  color: white;
+  font-weight: 600;
+  border: none;
+}
+
+.admin-link:hover {
+  background: linear-gradient(45deg, #34d399, #60a5fa);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(52, 211, 153, 0.3);
+}
+
 /* Espaçamento para o conteúdo principal por causa do header fixo */
 body {
-  padding-top: 5rem;
+  padding-top: 7rem;
   margin: 0;
 }
 
@@ -150,23 +164,4 @@ body {
   body {
     padding-top: 7rem;
   }
-}
-
-.logout-button {
-  background: none;
-  border: none;
-  color: #4a5568;
-  font-weight: 600;
-  cursor: pointer;
-  padding: 0.5rem 1rem;
-  transition: all 0.3s ease;
-}
-
-.logout-button:hover {
-  color: #ef4444;
-  transform: translateY(-2px);
-}
-
-.logout-button:active {
-  transform: translateY(0);
 } 

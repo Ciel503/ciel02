@@ -13,12 +13,8 @@ export default function RootLayout({
 }>) {
   const pathname = usePathname();
   const isLoginPage = pathname === '/login' || pathname === '/login-adm' || pathname === '/registro-adm';
-
-  const handleLogout = () => {
-    document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT';
-    document.cookie = 'admin_token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT';
-    window.location.href = '/login';
-  };
+  const isMainPage = pathname === '/';
+  const isAdminPage = pathname === '/adicionar' || pathname === '/deletar' || pathname === '/adm' || pathname === '/criar-usuario';
 
   return (
     <html lang="pt-BR">
@@ -30,27 +26,33 @@ export default function RootLayout({
             </Link>
             <nav>
               <ul className="nav-links">
-                {!isLoginPage && (
+                {!isLoginPage && !isMainPage && (
                   <>
-                    <li>
-                      <Link href="/adicionar" className="nav-link">
-                        <IoMdAdd />
-                        <span>ADICIONAR</span>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link href="/deletar" className="nav-link">
-                        <MdDelete />
-                        <span>DELETAR</span>
-                      </Link>
-                    </li>
+                    {pathname !== '/adm' && (
+                      <>
+                        <li>
+                          <Link href="/adicionar" className="nav-link">
+                            <IoMdAdd />
+                            <span>ADICIONAR</span>
+                          </Link>
+                        </li>
+                        <li>
+                          <Link href="/deletar" className="nav-link">
+                            <MdDelete />
+                            <span>DELETAR</span>
+                          </Link>
+                        </li>
+                      </>
+                    )}
+                    {isAdminPage && pathname !== '/adm' && (
+                      <li>
+                        <Link href="/criar-usuario" className="nav-link admin-link">
+                          <span>ADMINISTRAÇÃO</span>
+                        </Link>
+                      </li>
+                    )}
                   </>
                 )}
-                <li>
-                  <button onClick={handleLogout} className="nav-link logout-button">
-                    SAIR
-                  </button>
-                </li>
               </ul>
             </nav>
           </div>

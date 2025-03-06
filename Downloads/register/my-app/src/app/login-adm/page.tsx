@@ -92,6 +92,12 @@ export default function LoginAdm() {
             {loading ? 'Entrando...' : 'Entrar'}
           </button>
         </form>
+
+        <div className="login-links">
+          <a href="/adm" className="login-link">
+            Voltar
+          </a>
+        </div>
       </div>
     </div>
   );
